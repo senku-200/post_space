@@ -1,0 +1,9 @@
+{% extends 'home.html' %}
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <h1>{{context}}</h1>
+        <button type="submit">submit</button>
+        <a href="{{ request.META.HTTP_REFERER}}">GO BACK</a>
+    </form>
+{% endblock content %}

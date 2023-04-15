@@ -1,0 +1,41 @@
+{% extends 'home.html' %}
+
+
+{% block content %}
+    
+    <h1>@{{channel}}</h1>
+    <p>{{channel.about_channel}}</p>
+    {% if user == channel.host %}
+        <a href="{% url 'editchannel' channel.id %}"><small>EDIT CHANNEL</small></a>
+        <a href="{% url 'delete_channel' channel.id %}"><small>DELETE CHANNEL</small></a>
+    {% endif %}
+    {% if user.is_authenticated %}
+    {% if subscribe %}
+        <form  method="post">
+            {% csrf_token %}
+            <button type="submit">SUBSCRIBE</button>
+        </form>
+    {% else %}
+        <form  method="post">
+            {% csrf_token %}
+            <button type="submit">SUBSCRIBED</button>
+        </form>
+        
+    {% endif %}
+    {% else %}
+        <h3><a href="{% url 'login' %}">LOGIN</a>to subscribe</h3>
+    {% endif %}
+    <small>subscribers:{{subscribers_count}}</small>
+
+    <br>
+    {% if user == channel.host %}
+        <a href="{% url 'createpost' channel.id %}">NEWPOST</a>
+    {% endif %}
+    {% for post in posts %}
+    <div>
+        <a href="{% url 'post' post.id %}?q= {{channel.id}}"><h1>{{post.title}}</h1></a>
+        
+        <p>{{post.discription}}</p>
+    </div>
+    {% endfor %}
+{% endblock content %}

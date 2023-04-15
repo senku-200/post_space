@@ -1,0 +1,80 @@
+{% extends 'home.html' %}
+<style>
+    .post{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        line-height: 2.4em;
+    }
+</style>
+{% block content %}
+    <div class="post">
+        {% if user == channel.host %}
+            <a href="{% url 'editpost' post.id%}"><small>EDIT POST</small></a>
+            <a href="{% url 'delete_post' post.id %}">DELETE POST</a>
+        {% endif  %}
+        <small>@{{channel}}</small>
+        
+        <h1>{{post.title}}</h1>
+        <p>{{post.discription}}</p>
+
+        {% if user.is_authenticated %}
+        <div class="likes">
+            {% if likes %}
+                <form  method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="like">LIKE ({{likes_count}})</button>
+                </form>
+            {% else %}
+                <form  method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="like">LIKED ({{likes_count}})</button>
+                </form>
+            {% endif %}
+            </button>
+        </div>
+        <div class="dislike">
+            {% if dislikes %}
+            <form  method="post" >
+                {% csrf_token %}
+                <button type="submit" name="dislike">DISLIKE ({{dislikes_count}})</button>
+            </form>
+            {% else %}
+                <form  method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="dislike">DISLIKED ({{dislikes_count}})</button>
+                </form>
+            {% endif %}
+            </button>
+        </div>
+        {% else %}
+            <a href="{% url 'login' %}">login</a> to like and comment
+        {% endif %}
+        
+        <div class="comments">
+            <h3>comments ({{comments_count}})</h3>
+            {% if user.is_authenticated %}
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="text" name = "comment" placeholder=" Put Your Comments <<<">
+                <button type="submit">submit</button>
+            </form>
+            {% endif %}
+            
+            {% for comment in comments %}
+                <div>
+                    {% if user == post.channel.host %}
+                    <a href="{% url 'delete_comment' comment.id %}?q={{post.id}}">DEL COMMENT</a>  
+                    {% endif %} 
+                    <small>@{{comment.user.username}}   {{comment.created|timesince}}</small>
+                    <br>
+                    {{comment}}
+                    <hr>
+                </div>
+                
+            {% endfor %}    
+        </div>
+        
+    </div>
+{% endblock content %}
